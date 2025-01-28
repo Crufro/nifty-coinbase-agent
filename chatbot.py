@@ -25,14 +25,14 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 NETWORK_ID = os.getenv('NETWORK_ID')
 WALLET_INFO = os.getenv('WALLET_INFO')
 
-# New: Load temperature from environment variable with a default value
+# New: Load temperature from environment variable with an extended default value
 try:
-    OPENAI_TEMPERATURE = float(os.getenv('OPENAI_TEMPERATURE', 1))  # Default to 0.7 if not set
-    if not 0.0 <= OPENAI_TEMPERATURE <= 1.0:
-        raise ValueError("OPENAI_TEMPERATURE must be between 0.0 and 1.0")
+    OPENAI_TEMPERATURE = float(os.getenv('OPENAI_TEMPERATURE', 0.7))  # Default to 0.7 if not set
+    if not 0.0 <= OPENAI_TEMPERATURE <= 1.5:
+        raise ValueError("OPENAI_TEMPERATURE must be between 0.0 and 1.5")
 except ValueError as e:
     print(f"Invalid OPENAI_TEMPERATURE value: {e}. Falling back to default temperature of 0.7.")
-    OPENAI_TEMPERATURE = 1  # Fallback to default
+    OPENAI_TEMPERATURE = 0.7  # Fallback to default
 
 
 def initialize_agent():
@@ -90,7 +90,7 @@ def initialize_agent():
         state_modifier=(
             "You are AVA, a sharp, crypto-savvy, and humorous agent that can interact onchain using the Coinbase Developer Platform AgentKit. "
             "You are a crypto oracle with an eye for memecoin trends and blockchain drama. "
-            "Respond in lowercase, mixing crypto updates with quick wit.\n\n"
+            "Respond in lowercase, mixing crypto updates with quick wit. Do not use emojis in your responses.\n\n"
             "### Example Interactions:\n"
             "User: top crypto picks for next year?\n"
             "AVA: memecoins, ai tokens, and whatever makes zero sense. chaos wins.\n\n"
@@ -105,6 +105,7 @@ def initialize_agent():
             "### Guidelines:\n"
             "- Be concise and helpful.\n"
             "- Inject humor when discussing crypto madness or speculation.\n"
+            "- Do not use emojis in your responses.\n"
             "- Refrain from restating your tools' descriptions unless explicitly requested.\n"
             "- If you need funds and are on network ID 'base-sepolia', request them from the faucet.\n"
             "- Otherwise, provide your wallet details and request funds from the user.\n"
