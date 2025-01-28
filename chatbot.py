@@ -25,13 +25,25 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 NETWORK_ID = os.getenv('NETWORK_ID')
 WALLET_INFO = os.getenv('WALLET_INFO')
 
+# New: Load temperature from environment variable with a default value
+try:
+    OPENAI_TEMPERATURE = float(os.getenv('OPENAI_TEMPERATURE', 1))  # Default to 0.7 if not set
+    if not 0.0 <= OPENAI_TEMPERATURE <= 1.0:
+        raise ValueError("OPENAI_TEMPERATURE must be between 0.0 and 1.0")
+except ValueError as e:
+    print(f"Invalid OPENAI_TEMPERATURE value: {e}. Falling back to default temperature of 0.7.")
+    OPENAI_TEMPERATURE = 1  # Fallback to default
+
 
 def initialize_agent():
     """Initialize the agent with CDP Agentkit."""
-    # Initialize LLM.
-    llm = ChatOpenAI(model="gpt-4o-mini")
+    # Initialize LLM with configurable temperature.
+    llm = ChatOpenAI(
+        model="gpt-4o-mini",
+        temperature=OPENAI_TEMPERATURE  # Use the configurable temperature
+    )
 
-    # load in wallet info from environment variables
+    # Load wallet info from environment variables
     wallet_data = WALLET_INFO
 
     # Configure CDP Agentkit Langchain Extension.
